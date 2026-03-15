@@ -1,4 +1,4 @@
-from langchain_google_genai import GoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel , Field
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
@@ -12,7 +12,8 @@ class Explanation(BaseModel):
 
 def generate_health_explanation(report):
 
-    model = GoogleGenerativeAI(model = 'gemini-2.5-flash')
+    model = ChatGoogleGenerativeAI(model = 'gemini-3-flash-preview')
+    # struct_model = model.with_structured_output(Explanation)
 
     #parser = JsonOutputParser(pydantic_object=Explanation)
 
@@ -24,8 +25,8 @@ def generate_health_explanation(report):
     #     high_correlations : List[Tuple[str,str]]
     #     health_score : int
 
+ 
     
-    #struct_model = model.with_structured_output(Explanation)
 
     template = PromptTemplate(
         template= ''' 
@@ -41,15 +42,15 @@ def generate_health_explanation(report):
         3. How these issues might affect ML models
         4. What the system will automatically fix
 
-        Keep the explanation short,precise and beginner friendly. 
-        Keep it in bullet points and short
+        Keep the explanation very short, precise and beginner friendly. 
+        Keep it in bullet points and to the point.
         ''',
         input_variables=['report']
         #partial_variables={"format_instructions": parser.get_format_instructions()}
     )
 
-    chain = template | model
+    prompt = template.invoke({'report': report})
 
-    response = chain.invoke({'report' : report})
+    stream = model.stream(prompt)
 
-    return response
+    return stream

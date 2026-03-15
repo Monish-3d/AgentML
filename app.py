@@ -14,6 +14,12 @@ from agents.health_score_agent import generate_health_explanation
 
 from utils.visualizations import plot_histograms, plot_correlation,plot_pairPlot
 
+#------------------------Utility Functions-------------------------------
+def stream_text(stream):
+    for chunk in stream:
+        if chunk.text:
+            yield chunk.text
+#------------------------------------------------------------------------
 st.title("AgentML Dataset Analyzer")
 
 uploaded_file = st.file_uploader("Upload dataset", type=["csv", "xlsx"])
@@ -98,13 +104,12 @@ if uploaded_file is not None:
 
         #report_json = json.dumps(report, indent=2)
         try:
-            explanation = generate_health_explanation(report)
+            stream = generate_health_explanation(report)
+            st.write_stream(stream_text(stream))
         except Exception as e:
             st.warning(f"error : {e}")
             explanation = "AI explanation could not be generated at the moment. Showing dataset statistics instead."
-            
-        
-        st.write(explanation)
+            st.write(explanation)
 
         # visualizations
         st.write("### Histograms")
@@ -118,8 +123,7 @@ if uploaded_file is not None:
         # st.write("### Pair Plot")
         # st.write("##### It visualizes relationships between multiple features by plotting all possible feature pairs with scatterplots")
         # fig = plot_pairPlot(df)
-
-        st.pyplot(fig)
+        # st.pyplot(fig)
 
         # kde plot -> It estimates and visualizes the probability density of a continuous variable, showing where values are concentrated smoothly instead of in discrete bins.
 
