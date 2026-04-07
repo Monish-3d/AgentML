@@ -1,4 +1,5 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from pydantic import BaseModel , Field
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
@@ -12,7 +13,8 @@ class Explanation(BaseModel):
 
 def generate_health_explanation(report):
 
-    model = ChatGoogleGenerativeAI(model = 'gemini-3-flash-preview')
+    #model = ChatGoogleGenerativeAI(model = 'gemini-3-flash-preview')
+    model = ChatOpenAI(model='gpt-5-nano')
     # struct_model = model.with_structured_output(Explanation)
 
     #parser = JsonOutputParser(pydantic_object=Explanation)
@@ -26,12 +28,10 @@ def generate_health_explanation(report):
     #     health_score : int
 
  
-    
-
     template = PromptTemplate(
         template= ''' 
         You are a machine learning assistant explaining dataset quality to a beginner.
-
+        Keep it STRICTLY under 150 words
         Dataset report:
         {report}
 

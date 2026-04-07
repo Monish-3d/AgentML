@@ -1,5 +1,4 @@
-def build_prompt(summary, missing, skewness, target, imbalance):
-
+def build_prompt(summary, missing, skewness, target, imbalance, corr):
     prompt = f"""
     You are a data preprocessing expert.
 
@@ -20,6 +19,9 @@ def build_prompt(summary, missing, skewness, target, imbalance):
 
     CLASS IMBALANCE RATIO:
     {imbalance}
+
+    CORRELATION MATRIX:
+    {corr}
     """
 
     return prompt
