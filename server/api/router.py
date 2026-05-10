@@ -12,6 +12,10 @@ router = APIRouter()
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+@router.get("/health")
+def home():
+    return {'message' : 'Agent ML server is active and running'}
+
 
 @router.post("/run", response_model=JobStartResponse)
 async def run_pipeline(
