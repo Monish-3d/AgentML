@@ -4,3 +4,5 @@ __pycache__/
 .vscode/
 .idea/
 .streamlit/secrets.toml
+server/uploads/
+server/outputs/
