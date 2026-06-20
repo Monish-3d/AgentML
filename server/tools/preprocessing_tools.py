@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE, SMOTENC
 
 def apply_preprocessing(df, steps, target=None):
 
@@ -114,6 +114,18 @@ def apply_preprocessing(df, steps, target=None):
                 y = df[target]
 
                 X = pd.get_dummies(X)
+
+                # SMOTE cannot handle NaN values — fill any remaining
+                # missing values with column medians before resampling
+                cols_with_nan = X.columns[X.isnull().any()].tolist()
+                if cols_with_nan:
+                    X[cols_with_nan] = X[cols_with_nan].fillna(
+                        X[cols_with_nan].median()
+                    )
+                    logs.append(
+                        f"Auto-imputed {cols_with_nan} with median "
+                        f"before SMOTE (SMOTE requires no NaN values)"
+                    )
 
                 sm = SMOTE()
                 X_res, y_res = sm.fit_resample(X, y)
